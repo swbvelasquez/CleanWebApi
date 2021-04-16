@@ -1,9 +1,11 @@
 using CleanWebApi.Core.Interfaces;
+using CleanWebApi.Infrastructure.Data;
 using CleanWebApi.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -28,7 +30,8 @@ namespace CleanWebApi.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddTransient<IPostRepository, PostRepository>();
+            services.AddTransient<IPostRepository, PostRepository>(); //para inyeccion de dependencias
+            services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("WebApiCleanCS"))); //para la conexion de EF
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,4 +1,5 @@
-﻿using CleanWebApi.Core.Interfaces;
+﻿using CleanWebApi.Core.Entities;
+using CleanWebApi.Core.Interfaces;
 using CleanWebApi.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,10 +22,17 @@ namespace CleanWebApi.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPosts()
+        public async Task<ActionResult<IEnumerable<Post>>> GetPosts()
         {
-            var posts = await postRepository.GetPosts();
+            IEnumerable<Post> posts = await postRepository.GetPosts();
             return Ok(posts);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Post>> GetPost(int id)
+        {
+            Post post = await postRepository.GetPost(id);
+            return Ok(post);
         }
     }
 }
