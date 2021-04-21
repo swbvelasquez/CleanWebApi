@@ -11,6 +11,8 @@ namespace CleanWebApi.Infrastructure.Data.Configuration
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
+            builder.ToTable("User");
+
             builder.HasKey(e => e.UserId);
 
             builder.Property(e => e.FirstName)

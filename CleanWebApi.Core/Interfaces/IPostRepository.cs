@@ -1,4 +1,5 @@
-﻿using CleanWebApi.Core.Entities;
+﻿using CleanWebApi.Core.DTOs;
+using CleanWebApi.Core.Entities;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,5 +11,6 @@ namespace CleanWebApi.Core.Interfaces
     {
         Task<IEnumerable<Post>> GetPosts();
         Task<Post> GetPost(int id);
+        Task<int> InsertPost(Post post);
     }
 }

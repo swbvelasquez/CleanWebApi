@@ -11,12 +11,14 @@ namespace CleanWebApi.Infrastructure.Data.Configuration
     {
         public void Configure(EntityTypeBuilder<Comment> builder)
         {
+            builder.ToTable("Comment");
+
             builder.HasKey(e => e.CommentId);
 
             builder.Property(e => e.Description)
                 .IsRequired()
                 .HasMaxLength(500);
-
+            
             builder.HasOne(d => d.Post)
                 .WithMany(p => p.Comments)
                 .HasForeignKey(d => d.PostId)

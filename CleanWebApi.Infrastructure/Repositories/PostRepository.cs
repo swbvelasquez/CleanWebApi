@@ -1,4 +1,5 @@
-﻿using CleanWebApi.Core.Entities;
+﻿using CleanWebApi.Core.DTOs;
+using CleanWebApi.Core.Entities;
 using CleanWebApi.Core.Interfaces;
 using CleanWebApi.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -21,15 +22,21 @@ namespace CleanWebApi.Infrastructure.Repositories
         public async Task<IEnumerable<Post>> GetPosts()
         {
             var posts = await dbContext.Posts.ToListAsync();
-
             return posts;
         }
 
         public async Task<Post> GetPost(int id)
         {
             var post = await dbContext.Posts.FirstOrDefaultAsync(x=>x.UserId==id);
-
             return post;
+        }
+
+        public async Task<int> InsertPost(Post post)
+        {
+            int result = 0;
+            dbContext.Posts.Add(post);
+            result = await dbContext.SaveChangesAsync();
+            return result;
         }
     }
 }

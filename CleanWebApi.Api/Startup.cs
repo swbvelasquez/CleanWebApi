@@ -32,6 +32,7 @@ namespace CleanWebApi.Api
             services.AddControllers();
             services.AddTransient<IPostRepository, PostRepository>(); //para inyeccion de dependencias
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("WebApiCleanCS"))); //para la conexion de EF
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //indica que use los profiles de automapper definidos
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

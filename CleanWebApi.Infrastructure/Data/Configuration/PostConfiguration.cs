@@ -11,6 +11,8 @@ namespace CleanWebApi.Infrastructure.Configuration
     {
         public void Configure(EntityTypeBuilder<Post> builder)
         {
+            builder.ToTable("Post");
+
             builder.HasKey(e => e.PostId);
 
             builder.Property(e => e.Description)
