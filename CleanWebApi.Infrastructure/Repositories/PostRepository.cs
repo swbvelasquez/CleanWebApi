@@ -27,7 +27,7 @@ namespace CleanWebApi.Infrastructure.Repositories
 
         public async Task<Post> GetPost(int id)
         {
-            var post = await dbContext.Posts.FirstOrDefaultAsync(x=>x.UserId==id);
+            var post = await dbContext.Posts.FirstOrDefaultAsync(x=>x.PostId==id);
             return post;
         }
 

@@ -38,7 +38,7 @@ namespace CleanWebApi.Api.Controllers
         {
             Post post = await postRepository.GetPost(id);
             PostDTO postDTO = mapper.Map<PostDTO>(post);
-            return Ok(post);
+            return Ok(postDTO);
         }
 
         [HttpPost]
@@ -46,7 +46,7 @@ namespace CleanWebApi.Api.Controllers
         {
             Post post = mapper.Map<Post>(postDTO);
             int result = await postRepository.InsertPost(post);
-            return CreatedAtAction(nameof(GetPost),new { id = post.PostId},post);
+            return CreatedAtAction(nameof(GetPost),new { id = post.PostId},postDTO);
         }
     }
 }
