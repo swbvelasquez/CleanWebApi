@@ -46,7 +46,46 @@ namespace CleanWebApi.Api.Controllers
         {
             Post post = mapper.Map<Post>(postDTO);
             int result = await postRepository.InsertPost(post);
+
+            if (result <= 0)
+            {
+                return Conflict();
+            }
+
             return CreatedAtAction(nameof(GetPost),new { id = post.PostId},postDTO);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdatePost(int id,PostDTO postDTO)
+        {
+            Post post = mapper.Map<Post>(postDTO);
+
+            if (postDTO.PostId != id)
+            {
+                return BadRequest();
+            }
+
+            int result = await postRepository.UpdatePost(post);
+
+            if (result <= 0)
+            {
+                return Conflict();
+            }
+
+            return NoContent();
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeletePost(int id)
+        {
+            int result = await postRepository.DeletePost(id);
+
+            if (result <= 0)
+            {
+                return Conflict();
+            }
+
+            return NoContent();
         }
     }
 }

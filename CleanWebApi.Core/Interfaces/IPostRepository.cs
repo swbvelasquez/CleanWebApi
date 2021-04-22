@@ -12,5 +12,7 @@ namespace CleanWebApi.Core.Interfaces
         Task<IEnumerable<Post>> GetPosts();
         Task<Post> GetPost(int id);
         Task<int> InsertPost(Post post);
+        Task<int> UpdatePost(Post post);
+        Task<int> DeletePost(int id);
     }
 }

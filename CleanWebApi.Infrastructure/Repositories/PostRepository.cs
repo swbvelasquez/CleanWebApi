@@ -38,5 +38,22 @@ namespace CleanWebApi.Infrastructure.Repositories
             result = await dbContext.SaveChangesAsync();
             return result;
         }
+
+        public async Task<int> UpdatePost(Post post)
+        {
+            int result = 0;
+            dbContext.Entry(post).State = EntityState.Modified;
+            result = await dbContext.SaveChangesAsync();
+            return result;
+        }
+
+        public async Task<int> DeletePost(int id)
+        {
+            int result = 0;
+            Post post = await GetPost(id);
+            dbContext.Posts.Remove(post);
+            result = await dbContext.SaveChangesAsync();
+            return result;
+        }
     }
 }
