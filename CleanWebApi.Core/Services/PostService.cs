@@ -9,10 +9,10 @@ namespace CleanWebApi.Core.Services
 {
     public class PostService : IPostService
     {
-        private readonly IPostRepository postRepository;
-        private readonly IUserRepository userRepository;
+        private readonly IRepository<Post> postRepository;
+        private readonly IRepository<User> userRepository;
 
-        public PostService(IPostRepository postRepository, IUserRepository userRepository)
+        public PostService(IRepository<Post> postRepository, IRepository<User>  userRepository)
         {
             this.postRepository = postRepository;
             this.userRepository = userRepository;
@@ -20,21 +20,21 @@ namespace CleanWebApi.Core.Services
 
         public async Task<IEnumerable<Post>> GetPosts()
         {
-            IEnumerable<Post> posts = await postRepository.GetPosts();
+            IEnumerable<Post> posts = await postRepository.GetAll();
             return posts;
         }
 
         public async Task<Post> GetPost(int id)
         {
-            Post post = await postRepository.GetPost(id);
+            Post post = await postRepository.Get(id);
             return post;
         }
 
         public async Task<int> InsertPost(Post post)
         {
-            User user = await userRepository.GetUser(post.UserId);
+            User user = await userRepository.Get(post.UserId);
 
-            if(user==null || user.UserId == 0)
+            if(user==null || user.Id == 0)
             {
                 throw new Exception("User doesn't exist");
             }
@@ -44,19 +44,19 @@ namespace CleanWebApi.Core.Services
                 throw new Exception("Content not allowed");
             }
 
-            int result = await postRepository.InsertPost(post);
+            int result = await postRepository.Insert(post);
             return result;
         }
 
         public async Task<int> UpdatePost(Post post)
         {
-            int result = await postRepository.UpdatePost(post);
+            int result = await postRepository.Update(post);
             return result;
         }
 
         public async Task<int> DeletePost(int id)
         {
-            int result = await postRepository.DeletePost(id);
+            int result = await postRepository.Delete(id);
             return result;
         }
     }

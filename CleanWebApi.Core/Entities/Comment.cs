@@ -3,9 +3,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CleanWebApi.Core.Entities
 {
-    public class Comment
+    public class Comment : BaseEntity
     {
-        public int CommentId { get; set; }
         public int PostId { get; set; }
         public int UserId { get; set; }
         public DateTime Date { get; set; }

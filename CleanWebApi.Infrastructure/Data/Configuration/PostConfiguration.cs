@@ -13,7 +13,10 @@ namespace CleanWebApi.Infrastructure.Configuration
         {
             builder.ToTable("Post");
 
-            builder.HasKey(e => e.PostId);
+            builder.HasKey(e => e.Id);
+
+            builder.Property(e => e.Id)
+                .HasColumnName("PostId");
 
             builder.Property(e => e.Description)
                 .IsRequired()

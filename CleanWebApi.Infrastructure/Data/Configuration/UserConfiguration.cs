@@ -13,7 +13,10 @@ namespace CleanWebApi.Infrastructure.Data.Configuration
         {
             builder.ToTable("User");
 
-            builder.HasKey(e => e.UserId);
+            builder.HasKey(e => e.Id);
+
+            builder.Property(e => e.Id)
+                .HasColumnName("UserId");
 
             builder.Property(e => e.FirstName)
                 .IsRequired()

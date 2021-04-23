@@ -4,15 +4,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CleanWebApi.Core.Entities
 {
-    public class User
+    public class User:BaseEntity
     {
         public User()
         {
             Comments = new HashSet<Comment>();
             Posts = new HashSet<Post>();
         }
-
-        public int UserId { get; set; }
         public String FirstName { get; set; }
         public String LastName { get; set; }
         public String Email { get; set; }

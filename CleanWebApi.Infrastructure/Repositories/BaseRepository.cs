@@ -9,48 +9,50 @@ using System.Threading.Tasks;
 
 namespace CleanWebApi.Infrastructure.Repositories
 {
-    public class UserRepository: IUserRepository
+    public class BaseRepository<T> : IRepository<T> where T : BaseEntity
     {
         private readonly AppDbContext dbContext;
+        private readonly DbSet<T> entities;
 
-        public UserRepository(AppDbContext dbContext)
+        public BaseRepository(AppDbContext dbContext)
         {
             this.dbContext = dbContext;
+            entities = dbContext.Set<T>();
         }
 
-        public async Task<IEnumerable<User>> GetUsers()
+        public async Task<IEnumerable<T>> GetAll()
         {
-            var users = await dbContext.Users.ToListAsync();
-            return users;
+            IEnumerable<T> collection = await entities.ToListAsync();
+            return collection;
         }
 
-        public async Task<User> GetUser(int id)
+        public async Task<T> Get(int id)
         {
-            var user = await dbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
-            return user;
+            T entity = await entities.FirstOrDefaultAsync(x => x.Id == id);
+            return entity;
         }
 
-        public async Task<int> InsertUser(User user)
+        public async Task<int> Insert(T entity)
         {
             int result = 0;
-            dbContext.Users.Add(user);
+            entities.Add(entity);
             result = await dbContext.SaveChangesAsync();
             return result;
         }
 
-        public async Task<int> UpdateUser(User user)
+        public async Task<int> Update(T entity)
         {
             int result = 0;
-            dbContext.Entry(user).State = EntityState.Modified;
+            dbContext.Entry(entity).State = EntityState.Modified;
             result = await dbContext.SaveChangesAsync();
             return result;
         }
 
-        public async Task<int> DeleteUser(int id)
+        public async Task<int> Delete(int id)
         {
             int result = 0;
-            User user = await GetUser(id);
-            dbContext.Users.Remove(user);
+            T entity = await Get(id);
+            entities.Remove(entity);
             result = await dbContext.SaveChangesAsync();
             return result;
         }

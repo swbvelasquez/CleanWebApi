@@ -13,7 +13,10 @@ namespace CleanWebApi.Infrastructure.Data.Configuration
         {
             builder.ToTable("Comment");
 
-            builder.HasKey(e => e.CommentId);
+            builder.HasKey(e => e.Id);
+
+            builder.Property(e => e.Id)
+                .HasColumnName("CommentId");
 
             builder.Property(e => e.Description)
                 .IsRequired()
@@ -29,7 +32,7 @@ namespace CleanWebApi.Infrastructure.Data.Configuration
                 .WithMany(p => p.Comments)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_user_Comment");
+                .HasConstraintName("FK_User_Comment");
         }
     }
 }

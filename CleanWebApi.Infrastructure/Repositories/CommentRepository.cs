@@ -26,7 +26,7 @@ namespace CleanWebApi.Infrastructure.Repositories
 
         public async Task<Comment> GetComment(int id)
         {
-            var comment = await dbContext.Comments.FirstOrDefaultAsync(x => x.CommentId == id);
+            var comment = await dbContext.Comments.FirstOrDefaultAsync(x => x.Id == id);
             return comment;
         }
 
