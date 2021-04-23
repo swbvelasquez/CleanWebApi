@@ -2,6 +2,7 @@
 using CleanWebApi.Core.DTOs;
 using CleanWebApi.Core.Entities;
 using CleanWebApi.Core.Interfaces;
+using CleanWebApi.Core.Services;
 using CleanWebApi.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,19 +17,19 @@ namespace CleanWebApi.Api.Controllers
     [ApiController]
     public class PostController : ControllerBase
     {
-        private readonly IPostRepository postRepository;
+        private readonly IPostService postService;
         private readonly IMapper mapper;
 
-        public PostController(IPostRepository postRepository, IMapper mapper)
+        public PostController(IPostService postService, IMapper mapper)
         {
-            this.postRepository = postRepository;
+            this.postService = postService;
             this.mapper = mapper;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<PostDTO>>> GetPosts()
         {
-            IEnumerable<Post> posts = await postRepository.GetPosts();
+            IEnumerable<Post> posts = await postService.GetPosts();
             IEnumerable<PostDTO> postsDTO = mapper.Map<IEnumerable<PostDTO>>(posts);
             return Ok(postsDTO);
         }
@@ -36,7 +37,7 @@ namespace CleanWebApi.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<PostDTO>> GetPost(int id)
         {
-            Post post = await postRepository.GetPost(id);
+            Post post = await postService.GetPost(id);
             PostDTO postDTO = mapper.Map<PostDTO>(post);
             return Ok(postDTO);
         }
@@ -45,7 +46,7 @@ namespace CleanWebApi.Api.Controllers
         public async Task<ActionResult<PostDTO>> InsertPost(PostDTO postDTO)
         {
             Post post = mapper.Map<Post>(postDTO);
-            int result = await postRepository.InsertPost(post);
+            int result = await postService.InsertPost(post);
 
             if (result <= 0)
             {
@@ -65,7 +66,7 @@ namespace CleanWebApi.Api.Controllers
                 return BadRequest();
             }
 
-            int result = await postRepository.UpdatePost(post);
+            int result = await postService.UpdatePost(post);
 
             if (result <= 0)
             {
@@ -78,7 +79,7 @@ namespace CleanWebApi.Api.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeletePost(int id)
         {
-            int result = await postRepository.DeletePost(id);
+            int result = await postService.DeletePost(id);
 
             if (result <= 0)
             {

@@ -1,4 +1,5 @@
 using CleanWebApi.Core.Interfaces;
+using CleanWebApi.Core.Services;
 using CleanWebApi.Infrastructure.Data;
 using CleanWebApi.Infrastructure.Filters;
 using CleanWebApi.Infrastructure.Repositories;
@@ -32,9 +33,17 @@ namespace CleanWebApi.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddTransient<IPostRepository, PostRepository>(); //para inyeccion de dependencias
+
+            services.AddTransient<IPostRepository, PostRepository>(); //para inyeccion de dependencias del repository en todo el proyecto
+            services.AddTransient<IUserRepository, UserRepository>(); //para inyeccion de dependencias del repository en todo el proyecto
+            services.AddTransient<ICommentRepository, CommentRepository>(); //para inyeccion de dependencias del repository en todo el proyecto
+
+            services.AddTransient<IPostService, PostService>(); //para inyeccion de dependencias del service (logica negocio) en todo el proyecto
+
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("WebApiCleanCS"))); //para la conexion de EF
+            
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //indica que use los profiles de automapper definidos, se usa los asemblies por ser proyectos separados
+            
             services
                 .AddMvc(options => { options.Filters.Add<ValidationFilter>(); }) //agregado el filter para validar manualmente el model state
                 .AddFluentValidation(options => { options.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()); }); // registrando los validators para manejar las restricciones de los dtos y/o entidades, se usa asemblies de dominio por ser proyectos separados
