@@ -11,7 +11,7 @@ namespace CleanWebApi.Infrastructure.Filters
     {
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
         {
-            //valida el model state en un filter
+            //valida el model state en un filter, actualmente no se usa, se deja que el api controller lo use
             if (!context.ModelState.IsValid)
             {
                 context.Result = new BadRequestObjectResult(context.ModelState);

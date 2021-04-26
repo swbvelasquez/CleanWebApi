@@ -43,6 +43,8 @@ namespace CleanWebApi.Api
 
             services.AddTransient<IPostService, PostService>(); //para inyeccion de dependencias del service (logica negocio) en todo el proyecto
 
+            services.AddTransient<IUnitOfWork, UnitOfWork>(); //implementando el patron unit of work con los repositorios
+
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("WebApiCleanCS"))); //para la conexion de EF
             
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies()); //indica que use los profiles de automapper definidos, se usa los asemblies por ser proyectos separados

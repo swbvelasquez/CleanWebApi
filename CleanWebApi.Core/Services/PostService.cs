@@ -9,30 +9,28 @@ namespace CleanWebApi.Core.Services
 {
     public class PostService : IPostService
     {
-        private readonly IRepository<Post> postRepository;
-        private readonly IRepository<User> userRepository;
+        private readonly IUnitOfWork unitOfWork;
 
-        public PostService(IRepository<Post> postRepository, IRepository<User>  userRepository)
+        public PostService(IUnitOfWork unitOfWork)
         {
-            this.postRepository = postRepository;
-            this.userRepository = userRepository;
+            this.unitOfWork = unitOfWork;
         }
 
         public async Task<IEnumerable<Post>> GetPosts()
         {
-            IEnumerable<Post> posts = await postRepository.GetAll();
+            IEnumerable<Post> posts = await unitOfWork.PostRepository.GetAll();
             return posts;
         }
 
         public async Task<Post> GetPost(int id)
         {
-            Post post = await postRepository.Get(id);
+            Post post = await unitOfWork.PostRepository.Get(id);
             return post;
         }
 
         public async Task<int> InsertPost(Post post)
         {
-            User user = await userRepository.Get(post.UserId);
+            User user = await unitOfWork.UserRepository.Get(post.UserId);
 
             if(user==null || user.Id == 0)
             {
@@ -44,19 +42,19 @@ namespace CleanWebApi.Core.Services
                 throw new Exception("Content not allowed");
             }
 
-            int result = await postRepository.Insert(post);
+            int result = await unitOfWork.PostRepository.Insert(post);
             return result;
         }
 
         public async Task<int> UpdatePost(Post post)
         {
-            int result = await postRepository.Update(post);
+            int result = await unitOfWork.PostRepository.Update(post);
             return result;
         }
 
         public async Task<int> DeletePost(int id)
         {
-            int result = await postRepository.Delete(id);
+            int result = await unitOfWork.PostRepository.Delete(id);
             return result;
         }
     }
