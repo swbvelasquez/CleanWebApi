@@ -4,6 +4,7 @@ using CleanWebApi.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,8 +12,8 @@ namespace CleanWebApi.Infrastructure.Repositories
 {
     public class BaseRepository<T> : IRepository<T> where T : BaseEntity
     {
-        private readonly AppDbContext dbContext;
-        private readonly DbSet<T> entities;
+        private readonly AppDbContext dbContext; 
+        protected readonly DbSet<T> entities; //protected: visible para las clases que hereden y la misma
 
         public BaseRepository(AppDbContext dbContext)
         {
@@ -20,41 +21,32 @@ namespace CleanWebApi.Infrastructure.Repositories
             entities = dbContext.Set<T>();
         }
 
-        public async Task<IEnumerable<T>> GetAll()
+        //En este caso se quito el Task y ToListAsync() porque as Enumerable permite posponer la llamada de data para hacer filtros mientras que tolist no.
+        public IEnumerable<T> GetAll()
         {
-            IEnumerable<T> collection = await entities.ToListAsync();
-            return collection;
+            return entities.AsEnumerable();
         }
 
         public async Task<T> Get(int id)
         {
-            T entity = await entities.FirstOrDefaultAsync(x => x.Id == id);
-            return entity;
+            return await entities.FirstOrDefaultAsync(x => x.Id == id);
         }
 
-        public async Task<int> Insert(T entity)
+        public async Task Insert(T entity)
         {
-            int result = 0;
-            entities.Add(entity);
-            result = await dbContext.SaveChangesAsync();
-            return result;
+            await entities.AddAsync(entity);
         }
 
-        public async Task<int> Update(T entity)
+        public void Update(T entity)
         {
-            int result = 0;
             dbContext.Entry(entity).State = EntityState.Modified;
-            result = await dbContext.SaveChangesAsync();
-            return result;
+            //entities.Update(entity);
         }
 
-        public async Task<int> Delete(int id)
+        public async Task Delete(int id)
         {
-            int result = 0;
             T entity = await Get(id);
             entities.Remove(entity);
-            result = await dbContext.SaveChangesAsync();
-            return result;
         }
     }
 }

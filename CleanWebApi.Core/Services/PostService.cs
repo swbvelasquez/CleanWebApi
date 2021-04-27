@@ -1,7 +1,9 @@
 ﻿using CleanWebApi.Core.Entities;
+using CleanWebApi.Core.Exceptions;
 using CleanWebApi.Core.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,16 +18,14 @@ namespace CleanWebApi.Core.Services
             this.unitOfWork = unitOfWork;
         }
 
-        public async Task<IEnumerable<Post>> GetPosts()
+        public IEnumerable<Post> GetPosts()
         {
-            IEnumerable<Post> posts = await unitOfWork.PostRepository.GetAll();
-            return posts;
+            return unitOfWork.PostRepository.GetAll();
         }
 
         public async Task<Post> GetPost(int id)
         {
-            Post post = await unitOfWork.PostRepository.Get(id);
-            return post;
+            return await unitOfWork.PostRepository.Get(id);
         }
 
         public async Task<int> InsertPost(Post post)
@@ -34,27 +34,42 @@ namespace CleanWebApi.Core.Services
 
             if(user==null || user.Id == 0)
             {
-                throw new Exception("User doesn't exist");
+                throw new BusinessException("User doesn't exist");
             }
 
             if (post.Description.ToLower().Contains("sexo"))
             {
-                throw new Exception("Content not allowed");
+                throw new BusinessException("Content not allowed");
             }
 
-            int result = await unitOfWork.PostRepository.Insert(post);
+            var userPosts = await unitOfWork.PostRepository.GetPostsByUser(user.Id);
+            
+            if (userPosts!=null && userPosts.Count() < 10)
+            {
+                var lastPost = userPosts.OrderByDescending(x=>x.Date).FirstOrDefault();
+
+                if((DateTime.Now - lastPost.Date).TotalDays < 7)
+                {
+                    throw new BusinessException("You are not to able to publish the post");
+                }
+            }
+
+            await unitOfWork.PostRepository.Insert(post);
+            int result = await unitOfWork.SaveChangesAsync();
             return result;
         }
 
         public async Task<int> UpdatePost(Post post)
         {
-            int result = await unitOfWork.PostRepository.Update(post);
+            unitOfWork.PostRepository.Update(post);
+            int result = await unitOfWork.SaveChangesAsync();
             return result;
         }
 
         public async Task<int> DeletePost(int id)
         {
-            int result = await unitOfWork.PostRepository.Delete(id);
+            await unitOfWork.PostRepository.Delete(id);
+            int result = await unitOfWork.SaveChangesAsync();
             return result;
         }
     }

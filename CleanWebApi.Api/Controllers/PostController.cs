@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CleanWebApi.Api.Responses;
 using CleanWebApi.Core.DTOs;
 using CleanWebApi.Core.Entities;
 using CleanWebApi.Core.Interfaces;
@@ -27,9 +28,9 @@ namespace CleanWebApi.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PostDTO>>> GetPosts()
+        public ActionResult<IEnumerable<PostDTO>> GetPosts()
         {
-            IEnumerable<Post> posts = await postService.GetPosts();
+            IEnumerable<Post> posts = postService.GetPosts();
             IEnumerable<PostDTO> postsDTO = mapper.Map<IEnumerable<PostDTO>>(posts);
             return Ok(postsDTO);
         }
@@ -39,7 +40,8 @@ namespace CleanWebApi.Api.Controllers
         {
             Post post = await postService.GetPost(id);
             PostDTO postDTO = mapper.Map<PostDTO>(post);
-            return Ok(postDTO);
+            ApiResponse<PostDTO> response = new ApiResponse<PostDTO>(postDTO);
+            return Ok(response);
         }
 
         [HttpPost]
@@ -53,7 +55,7 @@ namespace CleanWebApi.Api.Controllers
                 return Conflict();
             }
 
-            return CreatedAtAction(nameof(GetPost),new { id = post.PostId},postDTO);
+            return CreatedAtAction(nameof(GetPost),new { id = post.Id},postDTO);
         }
 
         [HttpPut("{id}")]

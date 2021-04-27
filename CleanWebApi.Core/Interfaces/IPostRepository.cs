@@ -7,12 +7,8 @@ using System.Threading.Tasks;
 
 namespace CleanWebApi.Core.Interfaces
 {
-    public interface IPostRepository
+    public interface IPostRepository:IRepository<Post>
     {
-        Task<IEnumerable<Post>> GetPosts();
-        Task<Post> GetPost(int id);
-        Task<int> InsertPost(Post post);
-        Task<int> UpdatePost(Post post);
-        Task<int> DeletePost(int id);
+        Task<IEnumerable<Post>> GetPostsByUser(int userId);
     }
 }

@@ -11,7 +11,7 @@ namespace CleanWebApi.Infrastructure.Repositories
     public class UnitOfWork : IUnitOfWork
     {
         private readonly AppDbContext dbContext;
-        private readonly IRepository<Post> postRepository;
+        private readonly IPostRepository postRepository;
         private readonly IRepository<User> userRepository;
         private readonly IRepository<Comment> commentRepository;
 
@@ -20,7 +20,7 @@ namespace CleanWebApi.Infrastructure.Repositories
             this.dbContext = dbContext;
         }
 
-        public IRepository<Post> PostRepository => postRepository ?? new BaseRepository<Post>(dbContext); // si es nulo, se crea uno nuevo, sino retorna el existente
+        public IPostRepository PostRepository => postRepository ?? new PostRepository(dbContext); // si es nulo, se crea uno nuevo, sino retorna el existente
 
         public IRepository<User> UserRepository => userRepository ?? new BaseRepository<User>(dbContext);
 

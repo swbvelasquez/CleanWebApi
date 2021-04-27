@@ -8,10 +8,10 @@ namespace CleanWebApi.Core.Interfaces
 {
     public interface IRepository<T> where T : BaseEntity
     {
-        Task<IEnumerable<T>> GetAll();
+        IEnumerable<T> GetAll();
         Task<T> Get(int id);
-        Task<int> Insert(T entity);
-        Task<int> Update(T entity);
-        Task<int> Delete(int id);
+        Task Insert(T entity);
+        void Update(T entity);
+        Task Delete(int id);
     }
 }

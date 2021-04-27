@@ -10,50 +10,16 @@ using System.Threading.Tasks;
 
 namespace CleanWebApi.Infrastructure.Repositories
 {
-    public class PostRepository : IPostRepository
+    public class PostRepository : BaseRepository<Post>, IPostRepository
     {
-        private readonly AppDbContext dbContext;
-
-        public PostRepository(AppDbContext dbContext)
+        //Cuando heredas de una clase con constructor, debes enviar los parametros que solicita, en este caso el contexto
+        public PostRepository(AppDbContext dbContext) : base(dbContext)
         {
-            this.dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<Post>> GetPosts()
+        public async Task<IEnumerable<Post>> GetPostsByUser(int userId)
         {
-            var posts = await dbContext.Posts.ToListAsync();
-            return posts;
-        }
-
-        public async Task<Post> GetPost(int id)
-        {
-            var post = await dbContext.Posts.FirstOrDefaultAsync(x=>x.Id==id);
-            return post;
-        }
-
-        public async Task<int> InsertPost(Post post)
-        {
-            int result = 0;
-            dbContext.Posts.Add(post);
-            result = await dbContext.SaveChangesAsync();
-            return result;
-        }
-
-        public async Task<int> UpdatePost(Post post)
-        {
-            int result = 0;
-            dbContext.Entry(post).State = EntityState.Modified;
-            result = await dbContext.SaveChangesAsync();
-            return result;
-        }
-
-        public async Task<int> DeletePost(int id)
-        {
-            int result = 0;
-            Post post = await GetPost(id);
-            dbContext.Posts.Remove(post);
-            result = await dbContext.SaveChangesAsync();
-            return result;
+            return await entities.Where(x=>x.UserId== userId).ToListAsync();
         }
     }
 }

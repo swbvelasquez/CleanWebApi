@@ -32,7 +32,8 @@ namespace CleanWebApi.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers
+                (options => { options.Filters.Add<GlobalExceptionFilter>(); }); //para filtro de excepciones de respuesta segun ciclo de vida del app
 
             //comentado por que se esta cambiando de repositorios separados a uno generico
             //services.AddTransient<IPostRepository, PostRepository>(); //para inyeccion de dependencias del repository en todo el proyecto

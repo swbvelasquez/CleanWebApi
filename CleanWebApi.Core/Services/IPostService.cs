@@ -8,7 +8,7 @@ namespace CleanWebApi.Core.Services
 {   //Capa de logica de negocio, deberia ir en proyecto a parte si es mas complejo
     public interface IPostService
     {
-        Task<IEnumerable<Post>> GetPosts();
+        IEnumerable<Post> GetPosts();
         Task<Post> GetPost(int id);
         Task<int> InsertPost(Post post);
         Task<int> UpdatePost(Post post);
