@@ -3,6 +3,7 @@ using CleanWebApi.Api.Responses;
 using CleanWebApi.Core.DTOs;
 using CleanWebApi.Core.Entities;
 using CleanWebApi.Core.Interfaces;
+using CleanWebApi.Core.QueryFilters;
 using CleanWebApi.Core.Services;
 using CleanWebApi.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Http;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace CleanWebApi.Api.Controllers
@@ -28,11 +30,14 @@ namespace CleanWebApi.Api.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<PostDTO>> GetPosts()
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<PostDTO>>))] //Para indicar en la documentacion el tipo de dato y respuesta
+        [ProducesResponseType((int)HttpStatusCode.NotFound, Type = typeof(ApiResponse<IEnumerable<PostDTO>>))]
+        public IActionResult GetPosts([FromQuery] PostQueryFilter filters) //PostQueryFilter objeto complejo para mandar multiples parametros
         {
-            IEnumerable<Post> posts = postService.GetPosts();
+            IEnumerable<Post> posts = postService.GetPosts(filters);
             IEnumerable<PostDTO> postsDTO = mapper.Map<IEnumerable<PostDTO>>(posts);
-            return Ok(postsDTO);
+            ApiResponse<IEnumerable<PostDTO>> response = new ApiResponse<IEnumerable<PostDTO>>(postsDTO);
+            return Ok(response);
         }
 
         [HttpGet("{id}")]
