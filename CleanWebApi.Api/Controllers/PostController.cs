@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CleanWebApi.Api.Responses;
+using CleanWebApi.Core.CustomEntities;
 using CleanWebApi.Core.DTOs;
 using CleanWebApi.Core.Entities;
 using CleanWebApi.Core.Interfaces;
@@ -8,6 +9,7 @@ using CleanWebApi.Core.Services;
 using CleanWebApi.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,13 +32,26 @@ namespace CleanWebApi.Api.Controllers
         }
 
         [HttpGet]
-        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<PostDTO>>))] //Para indicar en la documentacion el tipo de dato y respuesta
-        [ProducesResponseType((int)HttpStatusCode.NotFound, Type = typeof(ApiResponse<IEnumerable<PostDTO>>))]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<PagedList<PostDTO>>))] //Para indicar en la documentacion el tipo de dato y respuesta
+        [ProducesResponseType((int)HttpStatusCode.NotFound, Type = typeof(ApiResponse<PagedList<PostDTO>>))]
         public IActionResult GetPosts([FromQuery] PostQueryFilter filters) //PostQueryFilter objeto complejo para mandar multiples parametros
         {
-            IEnumerable<Post> posts = postService.GetPosts(filters);
-            IEnumerable<PostDTO> postsDTO = mapper.Map<IEnumerable<PostDTO>>(posts);
-            ApiResponse<IEnumerable<PostDTO>> response = new ApiResponse<IEnumerable<PostDTO>>(postsDTO);
+            PagedList<Post> posts = postService.GetPosts(filters);
+            PagedList<PostDTO> postsDTO = mapper.Map<PagedList<PostDTO>>(posts);
+            ApiResponse<PagedList<PostDTO>> response = new ApiResponse<PagedList<PostDTO>>(postsDTO);
+
+            //Agregando al header de la respuesta un json
+            var metadata = new {
+                                posts.TotalCount,
+                                posts.TotalPages,
+                                posts.PageSize,
+                                posts.CurrentPage,
+                                posts.HasNextPage,
+                                posts.HasPreviousPage
+                               };
+
+            Response.Headers.Add("X-pagination", JsonConvert.SerializeObject(metadata));
+
             return Ok(response);
         }
 

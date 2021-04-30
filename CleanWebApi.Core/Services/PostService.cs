@@ -1,4 +1,5 @@
-﻿using CleanWebApi.Core.Entities;
+﻿using CleanWebApi.Core.CustomEntities;
+using CleanWebApi.Core.Entities;
 using CleanWebApi.Core.Exceptions;
 using CleanWebApi.Core.Interfaces;
 using CleanWebApi.Core.QueryFilters;
@@ -19,7 +20,7 @@ namespace CleanWebApi.Core.Services
             this.unitOfWork = unitOfWork;
         }
 
-        public IEnumerable<Post> GetPosts(PostQueryFilter filters)
+        public PagedList<Post> GetPosts(PostQueryFilter filters)
         {
             //Cuando es un IEnumerable, aun no esta cargada la informacion en memoria, por tanto, se puede usar los filtros en esta clase, si usa un tolist se debe pasar los filtros hasta la parte del repositorio
             IEnumerable<Post> posts = unitOfWork.PostRepository.GetAll();
@@ -39,7 +40,10 @@ namespace CleanWebApi.Core.Services
                 posts = posts.Where(x => x.Description.ToLower().Contains(filters.Description.ToLower()));
             }
 
-            return posts;
+            //paginacion
+            PagedList<Post> pagedPosts = PagedList<Post>.Create(posts, filters.PageNumber,filters.PageSize);
+
+            return pagedPosts;
         }
 
         public async Task<Post> GetPost(int id)
